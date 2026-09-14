@@ -1,4 +1,6 @@
 en:
   site_settings:
     animated_avatars_always_animate: "Always animate avatars"
-    animated_avatars_min_trust_level_to_display: "Min trust level to display an animated avatar"
+    animated_avatars_gating_methods: "Which method(s) grant access to display an animated avatar: trust_level, group, or both (staff always allowed)"
+    animated_avatars_min_trust_level_to_display: "Min trust level to display an animated avatar (used when trust_level is an active gating method)"
+    animated_avatars_allowed_groups: "Groups allowed to display an animated avatar (used when group is an active gating method)"

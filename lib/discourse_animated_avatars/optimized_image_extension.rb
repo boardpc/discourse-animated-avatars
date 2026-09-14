@@ -48,14 +48,25 @@ module DiscourseAnimatedAvatars
 
         instructions << to
 
-        ImageMagick.magick(
-          *instructions,
-          operation: :animated_webp_resize,
+        magick_opts = {
           read: [from],
           write: [File.dirname(to)],
           nice: 10,
           timeout: OptimizedImage::MAX_CONVERT_SECONDS,
-        )
+        }
+        magick_opts[:operation] = :animated_webp_resize if magick_accepts_operation?
+
+        ImageMagick.magick(*instructions, **magick_opts)
+      end
+
+      # Discourse `stable` predates the `operation:` keyword that `main` added to
+      # ImageMagick.magick/.identify for instrumentation, so passing it
+      # unconditionally raises `ArgumentError: unknown keyword: :operation` there.
+      # Detect support via reflection so this plugin works on both.
+      def magick_accepts_operation?
+        return @magick_accepts_operation if defined?(@magick_accepts_operation)
+        @magick_accepts_operation =
+          ImageMagick.method(:magick).parameters.any? { |_type, name| name == :operation }
       end
     end
   end

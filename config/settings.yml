@@ -1,8 +1,21 @@
 trust:
+  animated_avatars_gating_methods:
+    client: true
+    type: list
+    list_type: compact
+    choices:
+      - trust_level
+      - group
+    default: "trust_level"
   animated_avatars_min_trust_level_to_display:
     default: 3
     enum: "TrustLevelSetting"
     client: true
+  animated_avatars_allowed_groups:
+    client: true
+    type: group_list
+    list_type: compact
+    default: ""
   animated_avatars_always_animate:
     default: false
     client: true

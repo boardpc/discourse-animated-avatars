@@ -37,8 +37,16 @@ after_initialize do
   end
 
   add_to_class(:user, :animated_avatar) do
-    pass_tl_check = staff? || trust_level >= SiteSetting.animated_avatars_min_trust_level_to_display
-    uploaded_avatar&.url if uploaded_avatar&.animated? && pass_tl_check
+    gating_methods = SiteSetting.animated_avatars_gating_methods.split("|")
+    pass_tl_check =
+      gating_methods.include?("trust_level") &&
+        trust_level >= SiteSetting.animated_avatars_min_trust_level_to_display
+    allowed_group_ids = SiteSetting.animated_avatars_allowed_groups.split("|").map(&:to_i)
+    pass_group_check =
+      gating_methods.include?("group") && allowed_group_ids.present? &&
+        groups.where(id: allowed_group_ids).exists?
+    pass_gating_check = staff? || pass_tl_check || pass_group_check
+    uploaded_avatar&.url if uploaded_avatar&.animated? && pass_gating_check
   end
 
   add_to_serializer(:basic_user, :animated_avatar) do
